@@ -11,6 +11,7 @@
 var video_list = [];
 var index = 0;
 var init = true;
+var search = false;
 var api_index = 1;
 jQuery(function($) {
     $("#search").click(function(){
@@ -18,8 +19,8 @@ jQuery(function($) {
         video_list = [];
         index = 0;
         api_index = 1;
+        search = true;
         get_list();
-        play();
     });
     $("#prev").click(function(){
         prev();
@@ -52,7 +53,7 @@ function get_list() {
             "start-index": api_index
         },
         function(rs) {
-            var query = new RegExp($("#query").attr("value"),"i");
+            var queryReg = new RegExp($("#query").attr("value"),"i");
             api_index += 10;
             var rs_list = rs.data.items;
 
@@ -60,7 +61,7 @@ function get_list() {
                 return b.favoriteCount - a.favoriteCount;
             });
             for (var i = 0, max = rs_list.length;  i < max; i++) {
-                if (rs_list[i].title.match(query)) {
+                if (rs_list[i].title.match(queryReg)) {
                     video_list.push(rs_list[i]);
                 }
             }
@@ -73,6 +74,7 @@ function get_list() {
             highlight();
 
             if ( video_list.length == 0 ) {
+                $("#list").html(query + " の検索結果は0件でした。");
                 return;
             }
 
@@ -80,6 +82,9 @@ function get_list() {
                 swfobject.embedSWF("http://www.youtube.com/v/" + video_list[index].id + "?enablejsapi=1&autoplay=1&playerapiid=player",
                                   "video", "854", "480", "8", null, null, { allowScriptAccess: "always" }, { id: "player" });
                 init = false;
+            } else if (search) {
+                play();
+                search = false;
             }
        }
     );
