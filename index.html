@@ -78,13 +78,17 @@ function get_list() {
                 return;
             }
 
+            // 最初だけswfobject作成
             if (init) {
                 swfobject.embedSWF("http://www.youtube.com/v/" + video_list[index].id + "?enablejsapi=1&autoplay=1&playerapiid=player",
                                   "video", "854", "480", "8", null, null, { allowScriptAccess: "always" }, { id: "player" });
                 init = false;
-            } else if (search) {
-                play();
                 search = false;
+            }
+            // 検索の時は新しく再生する
+            if (search) {
+                search = false;
+                play();
             }
        }
     );
