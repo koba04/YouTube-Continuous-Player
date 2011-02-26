@@ -19,6 +19,7 @@ jQuery(function($) {
         index = 0;
         api_index = 1;
         get_list();
+        play();
     });
     $("#prev").click(function(){
         prev();
@@ -69,6 +70,7 @@ function get_list() {
                 html += "<span id=\"trac_" + i + "\">" + this.title + "</span><br />";
             });
             $("#list").html(html);
+            highlight();
 
             if ( video_list.length == 0 ) {
                 return;
@@ -78,12 +80,7 @@ function get_list() {
                 swfobject.embedSWF("http://www.youtube.com/v/" + video_list[index].id + "?enablejsapi=1&autoplay=1&playerapiid=player",
                                   "video", "854", "480", "8", null, null, { allowScriptAccess: "always" }, { id: "player" });
                 init = false;
-            } else {
-                $("#info").html(video_list[index].title);
-                $("#trac_" + index).css("color", "red");
-                document.getElementById("player").loadVideoById(video_list[index].id);
             }
-            _highlight();
        }
     );
 }
@@ -92,9 +89,8 @@ function next() {
     if ( index >= video_list.length ) {
         return;
     }
-    $("#trac_" + index).css("color", "black");
-    document.getElementById("player").loadVideoById(video_list[++index].id);
-    _highlight();
+    ++index;
+    play();
     if ( video_list.length < (index + 3) ) {
         get_list();
     }
@@ -103,13 +99,17 @@ function prev() {
     if ( index < 1 ) {
         return;
     }
-    $("#trac_" + index).css("color", "black");
-    document.getElementById("player").loadVideoById(video_list[--index].id);
-    _highlight();
+    --index;
+    play();
 }
 
-function _highlight() {
+function play() {
+    document.getElementById("player").loadVideoById(video_list[index].id);
     $("#info").html(video_list[index].title);
+    highlight();
+}
+function highlight() {
+    $("#list").children().css("color", "black");
     $("#trac_" + index).css("color", "red");
 }
 </script>
