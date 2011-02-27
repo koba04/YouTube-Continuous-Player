@@ -60,12 +60,11 @@ function get_list() {
             rs_list = rs_list.sort(function(a, b) {
                 return b.favoriteCount - a.favoriteCount;
             });
-            for (var i = 0, max = rs_list.length;  i < max; i++) {
-                if (rs_list[i].title.match(queryReg)) {
-                    video_list.push(rs_list[i]);
+            $.each(rs_list, function() {
+                if (this.title.match(queryReg)) {
+                    video_list.push(this);
                 }
-            }
-
+            });
             var html = "";
             $.each(video_list, function(i, val){
                 html += "<span id=\"trac_" + i + "\">" + this.title + "</span><br />";
