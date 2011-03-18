@@ -79,7 +79,7 @@ function get_list(query) {
             highlight();
 
             if ( video_list.length == 0 ) {
-                $("#list").html(query + " の検索結果は0件でした。");
+                $("#list").html(encodeURIComponent(query) + " の検索結果は0件でした。");
                 return;
             }
 
