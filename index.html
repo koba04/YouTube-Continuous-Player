@@ -30,6 +30,7 @@ jQuery(function($) {
     var locationQuery = location.search;
     if ( locationQuery ) {
         locationQuery = locationQuery.replace(/^\?/,"");
+        locationQuery = locationQuery.replace(/%20/," ");
         var obj = { "query" : locationQuery };
         history.replaceState(obj, "", "?" + locationQuery);
         loadQuery(locationQuery);
