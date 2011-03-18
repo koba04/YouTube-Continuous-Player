@@ -30,7 +30,7 @@ jQuery(function($) {
     var locationQuery = location.search;
     if ( locationQuery ) {
         locationQuery = locationQuery.replace(/^\?/,"");
-        locationQuery = locationQuery.replace(/%20/," ");
+        locationQuery = decodeURI(locationQuery);
         var obj = { "query" : locationQuery };
         history.replaceState(obj, "", "?" + locationQuery);
         loadQuery(locationQuery);
@@ -79,7 +79,7 @@ function get_list(query) {
             highlight();
 
             if ( video_list.length == 0 ) {
-                $("#list").html(encodeURIComponent(query) + " の検索結果は0件でした。");
+                $("#list").html("検索結果は0件でした。");
                 return;
             }
 
