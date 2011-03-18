@@ -1,7 +1,7 @@
  <!DOCTYPE html>
 <head>
 <meta charset="utf-8">
-<title>YouTubeを連続再生してみるサンプル</title>
+<title>YouTubeを連続再生してみるサンプル(HTML5)</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 </head>
@@ -15,11 +15,10 @@ var api_index = 1;
 jQuery(function($) {
     $("#search").click(function(){
         $("#trac_" + index).css("color", "");
-        video_list = [];
-        index = 0;
-        api_index = 1;
-        search = true;
-        get_list();
+        var query = $("#query").attr("value");
+        loadNewArtist(query);
+        var obj = { "query" : query };
+        history.pushState(obj, "", "?" + query);
     });
     $("#prev").click(function(){
         prev();
@@ -27,6 +26,14 @@ jQuery(function($) {
     $("#next").click(function(){
         next();
     });
+
+    var locationQuery = location.search;
+    if ( locationQuery ) {
+        locationQuery = locationQuery.replace(/^\?/,"");
+        var obj = { "query" : locationQuery };
+        history.replaceState(obj, "", "?" + locationQuery);
+        loadNewArtist(locationQuery);
+    }
 });
 
 function onYouTubePlayerReady(playerId) {
@@ -39,8 +46,7 @@ function onytplayerStateChange(newState) {
     }
 }
 
-function get_list() {
-    var query = $("#query").attr("value");
+function get_list(query) {
     $.getJSON("http://gdata.youtube.com/feeds/api/videos?callback=?",
         {
             "q": query,
@@ -92,6 +98,15 @@ function get_list() {
     );
 }
 
+function loadNewArtist(query) {
+    video_list = [];
+    index = 0;
+    api_index = 1;
+    search = true;
+    $("#query").attr("value", query);
+    get_list(query);
+}
+
 function next() {
     if ( index >= video_list.length ) {
         return;
@@ -99,7 +114,7 @@ function next() {
     ++index;
     play();
     if ( video_list.length < (index + 3) ) {
-        get_list();
+        get_list( $("#query").attr("value") );
     }
 }
 function prev() {
@@ -119,8 +134,15 @@ function highlight() {
     $("#list").children().css("color", "black");
     $("#trac_" + index).css("color", "red");
 }
+
+window.addEventListener("popstate", function(e) {
+    if ( e.state ) {
+        loadNewArtist(e.state.query);
+    }
+});
+
 </script>
-<h1>YouTubeを連続再生してみるサンプル</h1>
+<h1>YouTubeを連続再生してみるサンプル(HTML5)</h1>
 <div>
 <input type="text" id="query" value=""/>
 <input type="button" id="search" value="search" />
