@@ -16,7 +16,7 @@ jQuery(function($) {
     $("#search").click(function(){
         $("#trac_" + index).css("color", "");
         var query = $("#query").attr("value");
-        loadNewArtist(query);
+        loadQuery(query);
         var obj = { "query" : query };
         history.pushState(obj, "", "?" + query);
     });
@@ -32,7 +32,7 @@ jQuery(function($) {
         locationQuery = locationQuery.replace(/^\?/,"");
         var obj = { "query" : locationQuery };
         history.replaceState(obj, "", "?" + locationQuery);
-        loadNewArtist(locationQuery);
+        loadQuery(locationQuery);
     }
 });
 
@@ -98,7 +98,7 @@ function get_list(query) {
     );
 }
 
-function loadNewArtist(query) {
+function loadQuery(query) {
     video_list = [];
     index = 0;
     api_index = 1;
@@ -137,7 +137,7 @@ function highlight() {
 
 window.addEventListener("popstate", function(e) {
     if ( e.state ) {
-        loadNewArtist(e.state.query);
+        loadQuery(e.state.query);
     }
 });
 
