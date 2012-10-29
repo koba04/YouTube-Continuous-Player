@@ -1,0 +1,72 @@
+ <!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>YouTubeを連続再生してみる(iframe api)</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>YouTubeを連続再生してみる(iframe api)</h1>
+<input type="text" id="query" size="50" placeholder="検索ワードを入力してね" />
+<input type="button" id="search" value="検索" /><br />
+<div id="video"></div>
+<script>
+jQuery(function($) {
+  var w = window, player;
+
+  $('#video').hide();
+
+  // https://developers.google.com/youtube/iframe_api_reference
+  var tag = document.createElement('script');
+  tag.src = "//www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  w.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('video', {
+      height: '450',
+      width: '800',
+      events: {
+        onReady: function() {
+          player.setLoop(true);
+        }
+      }
+    });
+  };
+
+  // search video
+  $("#search").click(function() {
+    var query = $("#query").attr("value");
+    if ( !query ) {
+      return;
+    }
+
+    $.ajax({
+      url: 'http://gdata.youtube.com/feeds/api/videos?',
+      dataType: 'jsonp',
+      data: {
+        'q': query,
+        'alt': 'jsonc',
+        'v': 2,
+        'max-results': 50,
+        'format': 5,
+        'orderby': "viewCount",
+        'start-index': 1
+      }
+    }).done(function(data) {
+      player.stopVideo();
+      player.clearVideo();
+      $('#video').fadeIn();
+      var videos = [];
+      $.each(data.data.items, function() {
+        videos.push(this.id);
+      });
+      // sort by favorite
+      videos = videos.sort(function(a, b) {
+        return b.favoriteCount - a.favoriteCount;
+      });
+      player.cuePlaylist(videos);
+    });
+  });
+});
+</script>
+</body>
+</html>
